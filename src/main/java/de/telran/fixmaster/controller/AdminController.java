@@ -92,11 +92,11 @@ public class AdminController {
         product.setQuantity(productDTO.getQuantity());
         product.setDescription(productDTO.getDescription());
         String imageUUID;
-        if (!file.isEmpty()){
+        if (!file.isEmpty()) {
             imageUUID = file.getOriginalFilename();
             Path fileNameAhdPath = Paths.get(uploadDir, imageUUID);
             Files.write(fileNameAhdPath, file.getBytes());
-        }else {
+        } else {
             imageUUID = imgName;
         }
         product.setImageName(imageUUID);
@@ -105,5 +105,27 @@ public class AdminController {
         return "redirect:/admin/products";
     }
 
+    @GetMapping("/admin/product/delete/{id}")
+    public String deleteProduct(@PathVariable long id) {
+        productService.removeProductById(id);
+        return "redirect:/admin/products";
+    }
 
+    @GetMapping("/admin/product/update/{id}")
+    public String updateProduct(@PathVariable long id, Model model) {
+        Product product = productService.getProductById(id).get();
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(product.getId());
+        productDTO.setName(product.getName());
+        productDTO.setCategoryId(product.getCategory().getId());
+        productDTO.setPrice(product.getPrice());
+        product.setQuantity(product.getQuantity());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setImageName(product.getImageName());
+
+        model.addAttribute("categories", categoryService.getAllCategory());
+        model.addAttribute("productDTO", productDTO);
+        return "productsAdd";
+    }
 }
+
