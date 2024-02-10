@@ -9,8 +9,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -19,16 +17,18 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig{
 
-    private final ClientRegistrationRepository clientRegistrationRepository;
     private final GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
     private final CustomUserDetailService customUserDetailService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/shop/**", "/register", "/h2-console/**").permitAll()
+                                .requestMatchers("/", "/shop/**", "/register", "/h2-console/**",
+                                        "/resources/**", "/static/**", "/images/**", "/productimages/**", "/css/**", "/js/**")
+                                .permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
@@ -37,7 +37,7 @@ public class SecurityConfig{
                                 .loginPage("/login")
                                 .permitAll()
                                 .failureUrl("/login?error=true")
-                                .defaultSuccessUrl("/")
+                                .defaultSuccessUrl("/shop")
                                 .usernameParameter("email")
                                 .passwordParameter("password")
                 )
@@ -68,5 +68,4 @@ public class SecurityConfig{
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         auth.userDetailsService(customUserDetailService);
     }
-
 }
