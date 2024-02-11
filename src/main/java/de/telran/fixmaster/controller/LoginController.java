@@ -1,5 +1,6 @@
 package de.telran.fixmaster.controller;
 
+import de.telran.fixmaster.global.GlobalData;
 import de.telran.fixmaster.model.Role;
 import de.telran.fixmaster.model.User;
 import de.telran.fixmaster.repository.RoleRepository;
@@ -26,6 +27,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String login() {
+        GlobalData.cart.clear();
         return "login";
     }
 
